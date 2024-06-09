@@ -3,6 +3,7 @@
 
 # build up files
 build/
+/build/
 
 # data files
 data/
