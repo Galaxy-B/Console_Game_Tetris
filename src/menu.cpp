@@ -1,20 +1,24 @@
 #include "menu.hpp"
+#include "offline_game.hpp"
+#include "online_game.hpp"
+#include <cstdlib>
+#include <iostream>
 
 Menu::Menu() {}
 
 void Menu::action()
 {
-    // print guides before user starts a new game
-    print_guide(); 
-
     while (true)
     {        
+        // print guides before user starts a new game
+        char choice = print_guide(); 
+        
         system("cls");
 
-        // start a new game and get it to work
-        Game* game = new Game();
-
-        score = game->action(); 
+        // start a new game according to user's choice and get it to work
+        game = (choice == '\r' ? new Online_Game(ONLINE) : new Game(OFFLINE));
+        
+        score = game->action();
 
         delete game;
 
@@ -25,13 +29,13 @@ void Menu::action()
     }
 }
 
-void Menu::print_guide()
+char Menu::print_guide()
 {
     std::cout << "\n\tWelcome to Tetris!\n";
     std::cout << "\n\tUse UP DOWN LEFT RIGHT keys to operate the tetromino!\n";
-    std::cout << "\n\tPress any key to start a new game:";
+    std::cout << "\n\tPress [ENTER|any other key] to start a [ONLINE|OFFLINE] game:";
 
-    getch();
+    return getch();
 }
 
 void Menu::print_result()

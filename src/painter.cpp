@@ -1,6 +1,6 @@
 #include "painter.hpp"
 
-Painter::Painter()
+Painter::Painter(int mode)
 {
     // allocate memory for screen array
     screen = new wchar_t[SCREEN_HEIGHT * SCREEN_WIDTH];
@@ -11,23 +11,22 @@ Painter::Painter()
         screen[i] = L' ';
     }
 
-    // print the prompt
-    for (int i = 0; i < 5; i++)
-    {
-        screen[6 * SCREEN_WIDTH + (24 + i)] = t_notice[i];
-    }
+    // print the prompt of the next tetromino
+    std::swprintf(screen + (6 * SCREEN_WIDTH + 24), 16, L"next:");
 
-    for (int i = 0; i < 6; i++)
-    {
-        screen[15 * SCREEN_WIDTH + (24 + i)] = s_notice[i];
-    }
+    // print the prompt of the score that we've got
+    std::swprintf(screen + (15 * SCREEN_WIDTH + 24), 16, L"score:");
 
-    // designate the capacity of guidelinse
+    // designate the capacity of guidelines
     guidelines.reserve(30);
 
     // fetch the handle of console buffer
     console_buffer = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-    // set it as the active screen buffer
+}
+
+void Painter::init()
+{
+    // set handle as the active screen buffer
     SetConsoleActiveScreenBuffer(console_buffer);
 }
 
@@ -94,13 +93,7 @@ void Painter::paint(Field* field, Tetromino* curr_tetromino, Tetromino* next_tet
     }
 
     // render the score
-    wchar_t temp[16];
-    int len = std::swprintf(temp, 16, L"%d", score);
-
-    for (int i = 0; i < len; i++)
-    {
-        screen[17 * SCREEN_WIDTH + (24 + i)] = temp[i];
-    }
+    std::swprintf(screen + (17 * SCREEN_WIDTH + 24), 16, L"%d", score);
 
     // write everyting in screen array to console buffer
     WriteConsoleOutputCharacterW(console_buffer, screen, SCREEN_HEIGHT * SCREEN_WIDTH, {0, 0}, &bytes_written);

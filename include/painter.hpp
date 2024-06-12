@@ -5,6 +5,7 @@
 #include <vector>
 #include <utility>
 #include <string>
+#include <Winsock2.h>
 #include <windows.h>
 #include "field.hpp"
 #include "tetromino.hpp"
@@ -27,12 +28,6 @@ private:
     // hardcore all content type it may display on the screen
     const wchar_t* contents = L" X#=|";
 
-    // notice the player of the next tetromino
-    const wchar_t* t_notice = L"next:";
-
-    // display the score that we have got
-    const wchar_t* s_notice = L"score:";
-
     // everything we are going to paint
     wchar_t* screen;
 
@@ -46,7 +41,9 @@ private:
     DWORD bytes_written;
 
 public:
-    Painter();
+    Painter(int mode);
+
+    void init();
 
     void paint(Field* field, Tetromino* curr_tetromino, Tetromino* next_tetromino, int score);
 

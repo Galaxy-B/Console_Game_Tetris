@@ -4,7 +4,7 @@
 #include <conio.h>
 #include <iostream>
 #include <mingw.thread.h>
-#include "game.hpp"
+#include "offline_game.hpp"
 
 /**************************************************************  
 
@@ -15,6 +15,10 @@
 class Menu
 {
 private:
+    // game mode: offline or online
+    const int OFFLINE = 1;
+    const int ONLINE = 2;
+
     // that is what you think it is
     Game* game;
 
@@ -26,7 +30,7 @@ public:
 
     void action();
 
-    void print_guide();
+    char print_guide();
 
     void print_result();
 

@@ -18,6 +18,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output)
 # redirect the binary program to output directory
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/output)
 
+# link ws2_32 to support socket 
+link_libraries(ws2_32)
+
 include_directories(include)
 
 aux_source_directory(src SRC_LIST)

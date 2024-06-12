@@ -1,13 +1,13 @@
 #include <cstdio>
 #include <WinSock2.h>
 #include <cstring>
-#include <winsock.h>
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
-
+#include <inaddr.h>
 #include <stdlib.h>
 #include <mingw.thread.h>
 #include <iostream>
 #include <string>
+
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 // max length of the buffer holding message
 #define MAX_LEN 0xff
@@ -35,6 +35,11 @@ int main()
     address.sin_family = AF_INET;                                   // IPv4
     address.sin_port = htons(9999);                      // port 9999
     address.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");      // IP address
+
+    // print log
+    struct in_addr addr;
+    memcpy(&addr, &address.sin_addr.S_un.S_addr, 4);
+    std::cout << inet_ntoa(addr) << std::endl;
 
     ret = bind(server_socket, (sockaddr*)&address, sizeof(address));
     error_check(ret, "fail to bind the port as well as address!");
@@ -122,13 +127,14 @@ int main()
 
 void error_check(int ret, std::string alert)
 {
-    // print details to console when we meet mistakes
+    // Oops! we meet mistakes
     if (ret == -1)
     {
+        // print details to console and release the network environment
         std::cout << alert << std::endl;
-        
-        // release the network environment
         WSACleanup();
+        
+        system("pause");
         exit(-1);
     }
 }

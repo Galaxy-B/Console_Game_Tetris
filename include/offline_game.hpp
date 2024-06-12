@@ -1,5 +1,5 @@
-#ifndef _GAME_HPP_
-#define _GAME_HPP_
+#ifndef _OFFLINE_GAME_HPP_
+#define _OFFLINE_GAME_HPP_
 
 #include <cmath>
 #include <vector>
@@ -13,19 +13,19 @@
 
  * This header file states GAME class
 
- * GAME class is designed to implement game logic 
+ * GAME class is designed to implement basic game logic 
 
 ***************************************************************/
 
 class Game
 {
-private:
+protected:
     // bias that indicates directions ( ← | ↓ | → | rotate)
     const int bias[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, 0}};
 
     // directions
     enum directions{LEFT, DOWN, RIGHT, ROTATE};
-private:
+protected:
     // mark whether the game is over
     bool is_gameover;
 
@@ -60,9 +60,9 @@ private:
     bool d_pressed = false;
 
 public:
-    Game();
+    Game(int mode);
 
-    int action();
+    virtual int action();
 
     void gameover_check();
 

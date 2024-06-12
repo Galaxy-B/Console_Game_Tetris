@@ -1,30 +1,32 @@
-#include "game.hpp"
+#include "offline_game.hpp"
 
-Game::Game()
+Game::Game(int mode)
 {
     // initialization
-    this->is_gameover = false;
-    this->score = 0;
+    is_gameover = false;
+    score = 0;
 
     // allocate memory
-    this->field = new Field();
-    this->painter = new Painter();
-    this->tetromino_creator = new Tetromino_Creator();
+    field = new Field();
+    painter = new Painter(mode);
+    tetromino_creator = new Tetromino_Creator();
 
     // designate the capacity of eliminated_lines
     eliminated_lines.reserve(8);
 
     // set both tetromino pointer as nullptr
-    this->curr_tetromino = nullptr;
-    this->next_tetromino = nullptr;
+    curr_tetromino = nullptr;
+    next_tetromino = nullptr;
 
     // set falling speed as 1 unit per 500 ms
-    this->threshold = 10;
+    threshold = 10;
 }
 
 // action() start to execute the main loop of the game
 int Game::action()
 {   
+    painter->init();
+    
     // monitor the status of key ← ↑ → ↓
     bool key_down[4] = {false};
 
