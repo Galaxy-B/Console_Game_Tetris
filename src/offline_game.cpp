@@ -23,7 +23,7 @@ Game::Game(int mode)
 }
 
 // action() start to execute the main loop of the game
-int Game::action()
+std::pair<int, int> Game::action()
 {   
     painter->init();
     
@@ -97,7 +97,7 @@ int Game::action()
     }
 
     // return the score of this game
-    return score;
+    return {score, -1};
 }
 
 void Game::gameover_check()

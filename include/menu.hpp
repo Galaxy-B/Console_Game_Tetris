@@ -3,8 +3,11 @@
 
 #include <conio.h>
 #include <iostream>
+#include <typeinfo>
+#include <string>
 #include <mingw.thread.h>
 #include "offline_game.hpp"
+#include "online_game.hpp"
 
 /**************************************************************  
 
@@ -15,15 +18,8 @@
 class Menu
 {
 private:
-    // game mode: offline or online
-    const int OFFLINE = 1;
-    const int ONLINE = 2;
-
     // that is what you think it is
     Game* game;
-
-    // score of last finished game
-    int score;
 
 public:
     Menu();
@@ -32,7 +28,7 @@ public:
 
     char print_guide();
 
-    void print_result();
+    void print_result(int score, int rival_score);
 
     ~Menu();
 };

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <vector>
 #include <chrono>
+#include <utility>
 #include <mingw.thread.h>
 #include "field.hpp"
 #include "painter.hpp"
@@ -62,7 +63,7 @@ protected:
 public:
     Game(int mode);
 
-    virtual int action();
+    virtual std::pair<int, int> action();
 
     void gameover_check();
 

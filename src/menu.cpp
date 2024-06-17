@@ -1,8 +1,4 @@
 #include "menu.hpp"
-#include "offline_game.hpp"
-#include "online_game.hpp"
-#include <cstdlib>
-#include <iostream>
 
 Menu::Menu() {}
 
@@ -18,14 +14,15 @@ void Menu::action()
         // start a new game according to user's choice and get it to work
         game = (choice == '\r' ? new Online_Game(ONLINE) : new Game(OFFLINE));
         
-        score = game->action();
+        // score of last finished game
+        auto [score, rival_score] = game->action();
 
         delete game;
-
+        
         system("cls");
 
         // print result of the finished game
-        print_result();
+        print_result(score, rival_score);
     }
 }
 
@@ -38,11 +35,24 @@ char Menu::print_guide()
     return getch();
 }
 
-void Menu::print_result()
+void Menu::print_result(int score, int rival_score)
 {
-    std::cout << "\n\tOops! Game is over!\n";
-    std::cout << "\n\tYour final score is: " << score << "\n";
-    std::cout << "\n\tPress ENTER to start a new game:";
+    // print result of the offline game
+    if (rival_score == -1)
+    {
+        std::cout << "\n\tOops! Game is over!\n";
+        std::cout << "\n\tYour final score is: " << score << "\n";
+        std::cout << "\n\tPress ENTER to start a new game:";
+    }
+    // print result of the online match 
+    else
+    {
+        std::string prompt[2] = {"You lose!", "You win!"};
+        std::cout << "\n\tOops! Game is over! " << prompt[score > rival_score] << "\n";
+        std::cout << "\n\tYour final score is: " << score << "\n";
+        std::cout << "\n\tYour rival's final score is: " << rival_score << "\n";
+        std::cout << "\n\tPress ENTER to start a new game:";        
+    }
 
     while (getch() != '\r') {}
 }

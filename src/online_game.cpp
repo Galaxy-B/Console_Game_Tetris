@@ -1,10 +1,7 @@
 #include "online_game.hpp"
-#include <WinSock2.h>
-#include <functional>
-#include <psdk_inc/_socket_types.h>
 
 // function for the thread
-void communicate(SOCKET client_socket, char* buffer, int& score, int& rival_score);
+void communicate(SOCKET client_socket, int& score, int& rival_score, std::atomic<bool>& gameover, std::atomic<bool>& match_over);
 
 // check if any mistake happens, if so print it to console and shut down the program
 void error_check(int ret, std::string alert);
@@ -14,8 +11,11 @@ Online_Game::Online_Game(int mode) : Game(mode)
     // initialization
     rival_score = 0;
 
-    // allocate memory
-    buffer = new char[MAXLEN];
+    match_over.store(false);
+    th_gameover.store(false);
+
+    // buffer for socket IO
+    char buffer[MAXLEN];
 
     // ret holds the return value when we call APIs
     int ret;
@@ -51,12 +51,12 @@ Online_Game::Online_Game(int mode) : Game(mode)
     system("cls");
 
     // create a thread to keep communicating with the server
-    std::thread update_score(communicate, client_socket, buffer, std::ref(score), std::ref(rival_score));
+    std::thread update_score(communicate, client_socket, std::ref(score), std::ref(rival_score), std::ref(th_gameover), std::ref(match_over));
 
     update_score.detach();
 }
 
-int Online_Game::action()
+std::pair<int, int> Online_Game::action()
 {
     painter->init();
     
@@ -126,26 +126,47 @@ int Online_Game::action()
         /* 
          * render the current window
          */
-        painter->paint(field, curr_tetromino, next_tetromino, score);
+        painter->paint(field, curr_tetromino, next_tetromino, score, rival_score);
+    }
+
+    // notice the server that our game is over
+    th_gameover.store(true);
+
+    // waiting for our rival to finish the game
+    while (!match_over.load())
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        painter->paint(field, curr_tetromino, next_tetromino, score, rival_score);
     }
 
     // return the score of this game
-    return score;
+    return {score, rival_score};
 }
 
-Online_Game::~Online_Game()
-{
-    delete buffer;
-}
+Online_Game::~Online_Game() {}
 
-void communicate(SOCKET client_socket, char* buffer, int& score, int& rival_score)
+void communicate(SOCKET client_socket, int& score, int& rival_score, std::atomic<bool>& gameover, std::atomic<bool>& match_over)
 {
     int ret;
+    // buffer for socket IO
+    char buffer[MAXLEN];
     // until the server notice us that the game is over
     while (strcmp(buffer, "close") != 0)
     {   
-        // send our score to the server
-        std::sprintf(buffer, "%d", score);
+        // send special message to the server when our game is over
+        if (gameover.load())
+        {
+            std::sprintf(buffer, "over");
+            // avoid sending "over" to server repeatedly
+            gameover.store(false);
+        }
+        // otherwise send our score to the server
+        else
+        {
+            std::sprintf(buffer, "%d", score);
+        }
+        
         ret = send(client_socket, buffer, MAXLEN, 0);
         error_check(ret, "fail to send score message to the server!");
 
@@ -158,6 +179,9 @@ void communicate(SOCKET client_socket, char* buffer, int& score, int& rival_scor
     // release the network environment
     closesocket(client_socket);
     WSACleanup();
+
+    // set semaphore match_over as TRUE
+    match_over.store(true);
 }
 
 void error_check(int ret, std::string alert)

@@ -58,62 +58,80 @@ int main()
     SOCKET client1_socket = 0;
     SOCKET client2_socket = 0;
 
-    // wait for client1 to connect our server
-    std::cout << "waiting for client1 to join..." << std::endl;
-    client1_socket = accept(server_socket, &client1_address, &length1);
-    error_check((int)client1_socket, "fail to connect to client1!");
-
-    // print log
-    std::cout << "successfully connect to client1: " << (int)client1_socket << std::endl;
-
-    // wait for client2 to connect our server
-    std::cout << "waiting for client2 to join..." << std::endl;
-    client2_socket = accept(server_socket, &client2_address, &length2);
-    error_check((int)client2_socket, "fail to connect to client2!"); 
-
-    // print log
-    std::cout << "successfully connect to client2: " << (int)client2_socket << std::endl;
-
-    char buffer1[MAX_LEN];
-    char buffer2[MAX_LEN];
-
-    // notice both client to start a new game
-    sprintf(buffer1, "start");
-    sprintf(buffer2, "start");
-
-    ret = send(client1_socket, buffer1, strlen(buffer1), 0);
-    error_check(ret, "fail to send start message to client1!");
-    
-    ret = send(client2_socket, buffer2, strlen(buffer2), 0);
-    error_check(ret, "fail to send start message to client2!");
-
-    // keep exchanging score information until both game are over
-    while (strcmp(buffer1, "over") != 0 || strcmp(buffer2, "over") != 0)
+    while (true)
     {
-        // receive message from two clients
-        ret = recv(client1_socket, buffer1, strlen(buffer1), 0);
-        error_check(ret, "fail to receive message from client1!");
-        
-        ret = recv(client2_socket, buffer2, strlen(buffer2), 0);
-        error_check(ret, "fail to receive message from client2!");
+        // wait for client1 to connect our server
+        std::cout << "waiting for client1 to join..." << std::endl;
+        client1_socket = accept(server_socket, &client1_address, &length1);
+        error_check((int)client1_socket, "fail to connect to client1!");
 
-        // send score information to each other
-        ret = send(client1_socket, buffer2, strlen(buffer2), 0);
-        error_check(ret, "fail to send score message to client1!");
+        // print log
+        std::cout << "successfully connect to client1: " << (int)client1_socket << std::endl;
+
+        // wait for client2 to connect our server
+        std::cout << "waiting for client2 to join..." << std::endl;
+        client2_socket = accept(server_socket, &client2_address, &length2);
+        error_check((int)client2_socket, "fail to connect to client2!"); 
+
+        // print log
+        std::cout << "successfully connect to client2: " << (int)client2_socket << std::endl;
+
+        char buffer1[MAX_LEN];
+        char buffer2[MAX_LEN];
+
+        // notice both client to start a new game
+        sprintf(buffer1, "start");
+        sprintf(buffer2, "start");
+
+        ret = send(client1_socket, buffer1, MAX_LEN, 0);
+        error_check(ret, "fail to send start message to client1!");
         
-        ret = send(client2_socket, buffer1, strlen(buffer2), 0);
-        error_check(ret, "fail to send score message to client2!");
+        ret = send(client2_socket, buffer2, MAX_LEN, 0);
+        error_check(ret, "fail to send start message to client2!");
+
+        bool gameover1 = false;
+        bool gameover2 = false;
+
+        // keep exchanging score information until both game are over
+        while (!gameover1 || !gameover2)
+        {
+            // receive message from two clients
+            ret = recv(client1_socket, buffer1, MAX_LEN, 0);
+            error_check(ret, "fail to receive message from client1!");
+            
+            ret = recv(client2_socket, buffer2, MAX_LEN, 0);
+            error_check(ret, "fail to receive message from client2!");
+
+            // check whether game is over and send score information to each other
+            if (strcmp(buffer2, "over") == 0)
+            {
+                gameover2 = true;
+                std::cout << "client2 has finished its game" << std::endl;
+            }
+            
+            ret = send(client1_socket, buffer2, MAX_LEN, 0);
+            error_check(ret, "fail to send score message to client1!");
+            
+            if (strcmp(buffer1, "over") == 0)
+            {
+                gameover1 = true;
+                std::cout << "client1 has finished its game" << std::endl;
+            }
+            
+            ret = send(client2_socket, buffer1, MAX_LEN, 0);
+            error_check(ret, "fail to send score message to client2!");
+        }
+
+        // inform both client that the connection is going to close
+        sprintf(buffer1, "close");
+        sprintf(buffer2, "close");
+
+        ret = send(client1_socket, buffer1, MAX_LEN, 0);
+        error_check(ret, "fail to send close message to client1!");
+        
+        ret = send(client2_socket, buffer2, MAX_LEN, 0);
+        error_check(ret, "fail to send close message to client2!");
     }
-
-    // inform both client that the connection is going to close
-    sprintf(buffer1, "close");
-    sprintf(buffer2, "close");
-
-    ret = send(client1_socket, buffer1, strlen(buffer1), 0);
-    error_check(ret, "fail to send close message to client1!");
-    
-    ret = send(client2_socket, buffer2, strlen(buffer2), 0);
-    error_check(ret, "fail to send close message to client2!");
 
     // close all socket
     closesocket(server_socket);

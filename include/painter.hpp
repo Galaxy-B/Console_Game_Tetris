@@ -1,6 +1,9 @@
 #ifndef _PAINTER_HPP_
 #define _PAINTER_HPP_
 
+#define OFFLINE 0
+#define ONLINE 1
+
 #include <cwchar>
 #include <vector>
 #include <utility>
@@ -46,6 +49,8 @@ public:
     void init();
 
     void paint(Field* field, Tetromino* curr_tetromino, Tetromino* next_tetromino, int score);
+
+    void paint(Field* field, Tetromino* curr_tetromino, Tetromino* next_tetromino, int score, int rival_score);
 
     ~Painter();
 };
