@@ -4,8 +4,8 @@ project(My_Server)
 set(CMAKE_CXX_STANDARD 17)
 
 # set makefile generator
-set(CMAKE_GENERATOR "MinGW Makefiles")
-set(CMAKE_MAKE_PROGRAM "D:/vscode/mingw64/bin/make")
+# set(CMAKE_GENERATOR "MinGW Makefiles")
+# set(CMAKE_MAKE_PROGRAM "D:/vscode/mingw64/bin/make")
 
 # don't generate clangd commands
 set(CMAKE_EXPORT_COMPILE_COMMANDS OFF)
