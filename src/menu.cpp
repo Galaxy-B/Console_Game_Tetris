@@ -23,6 +23,8 @@ void Menu::action()
 
         // print result of the finished game
         print_result(score, rival_score);
+
+        system("cls");
     }
 }
 
