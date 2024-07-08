@@ -3,9 +3,9 @@
 
 #include <conio.h>
 #include <iostream>
-#include <typeinfo>
 #include <string>
 #include <mingw.thread.h>
+
 #include "offline_game.hpp"
 #include "online_game.hpp"
 

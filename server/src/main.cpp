@@ -1,8 +1,8 @@
-#include <cstdio>
-#include <WinSock2.h>
-#include <cstring>
-#include <inaddr.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <WinSock2.h>
+#include <inaddr.h>
 #include <mingw.thread.h>
 #include <iostream>
 #include <string>

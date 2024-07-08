@@ -1,7 +1,8 @@
 #include "online_game.hpp"
+#include <thread>
 
 // function for the thread
-void communicate(SOCKET client_socket, int& score, int& rival_score, std::atomic<bool>& gameover, std::atomic<bool>& match_over);
+void communicate(SOCKET client_socket, int& score, int& rival_score, std::atomic<bool>& gameover);
 
 // check if any mistake happens, if so print it to console and shut down the program
 void error_check(int ret, std::string alert);
@@ -11,7 +12,6 @@ Online_Game::Online_Game(int mode) : Game(mode)
     // initialization
     rival_score = 0;
 
-    match_over.store(false);
     th_gameover.store(false);
 
     // buffer for socket IO
@@ -51,9 +51,7 @@ Online_Game::Online_Game(int mode) : Game(mode)
     system("cls");
 
     // create a thread to keep communicating with the server
-    std::thread update_score(communicate, client_socket, std::ref(score), std::ref(rival_score), std::ref(th_gameover), std::ref(match_over));
-
-    update_score.detach();
+    communication = std::thread(communicate, client_socket, std::ref(score), std::ref(rival_score), std::ref(th_gameover));
 }
 
 std::pair<int, int> Online_Game::action()
@@ -133,11 +131,9 @@ std::pair<int, int> Online_Game::action()
     th_gameover.store(true);
 
     // waiting for our rival to finish the game
-    while (!match_over.load())
+    if (communication.joinable())
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-        painter->paint(field, curr_tetromino, next_tetromino, score, rival_score);
+        communication.join();
     }
 
     // return the score of this game
@@ -146,7 +142,7 @@ std::pair<int, int> Online_Game::action()
 
 Online_Game::~Online_Game() {}
 
-void communicate(SOCKET client_socket, int& score, int& rival_score, std::atomic<bool>& gameover, std::atomic<bool>& match_over)
+void communicate(SOCKET client_socket, int& score, int& rival_score, std::atomic<bool>& gameover)
 {
     int ret;
     // buffer for socket IO
@@ -179,9 +175,6 @@ void communicate(SOCKET client_socket, int& score, int& rival_score, std::atomic
     // release the network environment
     closesocket(client_socket);
     WSACleanup();
-
-    // set semaphore match_over as TRUE
-    match_over.store(true);
 }
 
 void error_check(int ret, std::string alert)

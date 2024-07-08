@@ -1,11 +1,12 @@
 #ifndef _OFFLINE_GAME_HPP_
 #define _OFFLINE_GAME_HPP_
 
-#include <cmath>
+#include <math.h>
 #include <vector>
 #include <chrono>
 #include <utility>
 #include <mingw.thread.h>
+
 #include "field.hpp"
 #include "painter.hpp"
 #include "tetromino.hpp"
@@ -77,7 +78,7 @@ public:
 
     void tetromino_fall(int& tick_count);
 
-    ~Game();
+    virtual ~Game();
 };
 
 #endif

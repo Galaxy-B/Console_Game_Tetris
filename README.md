@@ -2,7 +2,7 @@
 
 This lightweight project implements a classic e-game called Tetris. With the support of **double buffering technology**, it runs perfectly well in console.  
   
-Except for basic game logic, this project supports **network coummunication** of **C/S framework** (a.k.a. Client/Server) using **Windows Socket API**, which means you can match with your friends through **WLAN**.  
+Except for basic game logic, this project supports **network communication** of **C/S framework** (a.k.a. Client/Server) using **Windows Socket API**, which means you can match with your friends through **WLAN**.  
   
 You can find the implement of the *server* in `server` directory, and the implement of the *client* in `online_game.cpp` file under `src` directory.  
 

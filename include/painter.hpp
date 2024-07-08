@@ -4,12 +4,12 @@
 #define OFFLINE 0
 #define ONLINE 1
 
-#include <cwchar>
-#include <vector>
-#include <utility>
-#include <string>
+#include <wchar.h>
 #include <Winsock2.h>
 #include <windows.h>
+#include <vector>
+#include <utility>
+
 #include "field.hpp"
 #include "tetromino.hpp"
 

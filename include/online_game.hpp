@@ -10,6 +10,7 @@
 #include <mingw.thread.h>
 #include <atomic>
 #include <functional>
+
 #include "offline_game.hpp"
 
 /**************************************************************  
@@ -31,11 +32,11 @@ private:
 
     int rival_score;
 
-    // is_gameover for main thread | th_gameover for update_score thread
-    std::atomic<bool> th_gameover;
+    // thread for communicating with the server
+    std::thread communication;
 
-    // mark whether the match is over
-    std::atomic<bool> match_over;
+    // signal value to inform the thread of our game status
+    std::atomic<bool> th_gameover;
 
 public:
     Online_Game(int mode);

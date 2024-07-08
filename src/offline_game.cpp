@@ -243,7 +243,7 @@ void Game::elimination_check()
     if (!eliminated_lines.empty())
     {
         // calculate the score that we got from this elimination
-        score += std::pow(eliminated_lines.size(), 2);
+        score += pow(eliminated_lines.size(), 2);
         
         // if there is any line got eliminated, render the screen to display it
         painter->paint(field, nullptr, next_tetromino, score);

@@ -12,21 +12,21 @@ Painter::Painter(int mode)
     }
 
     // print the prompt of our play field
-    std::swprintf(screen + (3 * SCREEN_WIDTH + 11), 16, L"Your Field");
+    swprintf(screen + (3 * SCREEN_WIDTH + 11), 16, L"Your Field");
 
     // print the prompt of the next tetromino
-    std::swprintf(screen + (6 * SCREEN_WIDTH + 24), 16, L"next:");
+    swprintf(screen + (6 * SCREEN_WIDTH + 24), 16, L"next:");
 
     // print the prompt of the score that we've got
-    std::swprintf(screen + (15 * SCREEN_WIDTH + 24), 16, L"score:");
+    swprintf(screen + (15 * SCREEN_WIDTH + 24), 16, L"score:");
 
     // print the prompt of our rival's score
     const wchar_t* field_prompt[2] = {L"", L"Your Rival"};
-    std::swprintf(screen + (3 * SCREEN_WIDTH + 41), 16, field_prompt[mode]);
+    swprintf(screen + (3 * SCREEN_WIDTH + 41), 16, field_prompt[mode]);
 
     // print the prompt of our rival's field
     const wchar_t* score_prompt[2] = {L"", L"score:"}; 
-    std::swprintf(screen + (15 * SCREEN_WIDTH + 54), 16, score_prompt[mode]);
+    swprintf(screen + (15 * SCREEN_WIDTH + 54), 16, score_prompt[mode]);
 
     // designate the capacity of guidelines
     guidelines.reserve(30);
@@ -105,7 +105,7 @@ void Painter::paint(Field* field, Tetromino* curr_tetromino, Tetromino* next_tet
     }
 
     // render the score
-    std::swprintf(screen + (17 * SCREEN_WIDTH + 24), 16, L"%d", score);
+    swprintf(screen + (17 * SCREEN_WIDTH + 24), 16, L"%d", score);
 
     // write everyting in screen array to console buffer
     WriteConsoleOutputCharacterW(console_buffer, screen, SCREEN_HEIGHT * SCREEN_WIDTH, {0, 0}, &bytes_written);
@@ -175,8 +175,8 @@ void Painter::paint(Field* field, Tetromino* curr_tetromino, Tetromino* next_tet
     }
 
     // render our score and our rival's
-    std::swprintf(screen + (17 * SCREEN_WIDTH + 24), 16, L"%d", score);
-    std::swprintf(screen + (17 * SCREEN_WIDTH + 54), 16, L"%d", rival_score);
+    swprintf(screen + (17 * SCREEN_WIDTH + 24), 16, L"%d", score);
+    swprintf(screen + (17 * SCREEN_WIDTH + 54), 16, L"%d", rival_score);
 
     // write everyting in screen array to console buffer
     WriteConsoleOutputCharacterW(console_buffer, screen, SCREEN_HEIGHT * SCREEN_WIDTH, {0, 0}, &bytes_written);
